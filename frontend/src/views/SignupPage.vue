@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import LoginForm from '@/components/LoginForm.vue'
 import SignupForm from '@/components/SignupForm.vue'
-import Button from '@/components/ui/button/Button.vue'
-import Card from '@/components/ui/card/Card.vue'
 import { Package, Warehouse, BarChart3, Truck } from 'lucide-vue-next'
-import { ref } from 'vue'
-
-const activeTab = ref('login')
 </script>
 
 <template>
   <div className="min-h-screen bg-background flex">
-    <div
-      className="hidden lg:flex lg:w-1/2 bg-primary text-primary-foreground p-12 flex-col justify-between"
-    >
+    <div className="hidden lg:flex lg:w-1/2 bg-primary text-primary-foreground p-12 flex-col justify-between">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-primary-foreground/10 rounded-lg">
           <Warehouse className="h-8 w-8" />
