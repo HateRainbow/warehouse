@@ -9,8 +9,10 @@ import { Shield, Smartphone } from "lucide-vue-next";
 import { ref } from "vue";
 const digit = ref<string[]>([]);
 const isLoading = ref(false);
-const handleComplete = (e: string[]) => {
+const handleComplete = async (e: string[]) => {
   const secret = e.join();
+
+  await api.post("");
 };
 </script>
 
