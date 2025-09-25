@@ -5,7 +5,8 @@ import { validateData } from "../middleware/validationMiddleware";
 import z from "zod";
 import UserModel from "../model/user";
 import protectedRoute from "../middleware/protectedRoute";
-
+import jwt from "jsonwebtoken";
+import env from "../env";
 const twoFactorRouter = express.Router();
 type UserRequestMetadata = { _id: string };
 twoFactorRouter.get(
@@ -19,7 +20,7 @@ twoFactorRouter.get(
     const user = await UserModel.findById(_id);
 
     if (!user) {
-      res.status(300).json({ message: "user doesn't exist" });
+      return res.status(404).json({ message: "user doesn't exist" });
     }
 
     if (!secret.otpauth_url) {
@@ -46,34 +47,40 @@ twoFactorRouter.get(
 );
 
 const twoFactorSchema = z.object({
-  secret: z.string().nonempty(),
+  token: z.string().length(6),
 });
-
 twoFactorRouter.post(
   "/verify-2fa",
   validateData(twoFactorSchema),
-  protectedRoute,
   async (
     req: Request<{}, {}, z.infer<typeof twoFactorSchema>>,
     res: Response
   ) => {
-    // @ts-ignore
-    const { _id } = req.auth as UserRequestMetadata;
-    const { secret } = req.body;
-    const user = await UserModel.findById(_id);
+    const token = req.cookies.auth;
 
-    if (!user) {
-      return res.status(300).json({ message: "the user doesn't exist" });
+    if (!token) {
+      return res.status(401).json({ message: "No auth token provided" });
+    }
+
+    const { id } = jwt.verify(token, env.JWT_SECRET) as { id: string };
+
+    const { token: userToken } = req.body;
+
+    const user = await UserModel.findById(id);
+
+    if (!user || !user.twoFactorSecret) {
+      return res
+        .status(400)
+        .json({ message: "2FA is not setup for this user" });
     }
 
     const verified = speakeasy.totp.verify({
-      secret,
+      secret: user.twoFactorSecret,
       encoding: "base32",
-      token: _id,
+      token: userToken,
     });
 
     return res.json({ verified });
   }
 );
-
 export default twoFactorRouter;
