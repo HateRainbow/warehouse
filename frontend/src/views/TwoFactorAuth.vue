@@ -12,20 +12,16 @@ const isLoading = ref(false);
 const handleComplete = async (e: string[]) => {
   const secret = e.join();
 
-  await api.post("");
+  await api.post("/");
 };
 </script>
 
 <template>
-  <div
-    className="min-h-screen bg-background flex items-center justify-center p-4"
-  >
+  <div className="min-h-screen bg-background flex items-center justify-center p-4">
     <div className="w-full max-w-md space-y-6">
       <div className="text-center space-y-2">
         <div className="flex justify-center">
-          <div
-            className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center"
-          >
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
           </div>
         </div>
@@ -38,36 +34,18 @@ const handleComplete = async (e: string[]) => {
         </p>
         <Card className="border-2">
           <CardHeader className="text-center p-4">
-            <CardTitle
-              className="flex items-center justify-center gap-2 text-lg"
-            >
+            <CardTitle className="flex items-center justify-center gap-2 text-lg">
               <Smartphone className="w-5 h-5" />
               Two-Factor Authentication
             </CardTitle>
           </CardHeader>
-          <CardContent
-            className="space-y-10 flex items-center justify-center p-4"
-          >
-            <PinInput
-              class="flex gap-3"
-              id="pin-input"
-              v-model="digit"
-              placeholder="○"
-              @complete="handleComplete"
-            >
+          <CardContent className="space-y-10 flex items-center justify-center p-4">
+            <PinInput class="flex gap-3" id="pin-input" v-model="digit" placeholder="○" @complete="handleComplete">
               <PinInputGroup>
-                <PinInputSlot
-                  v-for="(id, index) in 5"
-                  :key="id"
-                  :index="index"
-                />
+                <PinInputSlot v-for="(id, index) in 5" :key="id" :index="index" />
               </PinInputGroup>
             </PinInput>
-            <Button
-              type="submit"
-              className="w-full h-12 text-base font-semibold"
-              :disabled="isLoading"
-            >
+            <Button type="submit" className="w-full h-12 text-base font-semibold" :disabled="isLoading">
               {{ isLoading ? "Verifying..." : "Verify & Continue" }}
             </Button>
           </CardContent>

@@ -30,7 +30,7 @@ const router = createRouter({
         }
       },
       children: [
-        { path: "warehouse", component: WareHouse },
+        { path: "", component: WareHouse },
         { path: "admin", component: AdminPanel },
       ],
     },
