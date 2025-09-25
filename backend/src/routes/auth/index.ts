@@ -8,7 +8,11 @@ const routes = [itemRoute, adminRoute] as const;
 const authorizedRoutes = express.Router();
 
 // Utility route for frontend to verify if the user is currently logged in
-authorizedRoutes.get("/auth", authorizedRoutes);
+authorizedRoutes.get("/auth", protectedRoute, (_req, res: Response) => {
+  return res.json({
+    message: "user is authorized",
+  });
+});
 
 routes.forEach((route) => authorizedRoutes.use("/auth", protectedRoute, route));
 
