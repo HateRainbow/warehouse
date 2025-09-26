@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import SidebarProvider from "./ui/sidebar/SidebarProvider.vue";
+import { Warehouse } from "lucide-vue-next";
+import ProfileSideBar from "./ProfileSideBar.vue";
 </script>
 
 <template>
-  <SidebarProvider
-    ><div class="mx-2 flex w-screen justify-between p-2">
-      <div class="min-w-0 flex-1">
-        <h2
-          class="text-2xl/7 font-bold text-black sm:truncate sm:text-3xl sm:tracking-tight"
-        >
-          Back End Developer
-        </h2>
-        <div
-          class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6"
-        ></div>
-      </div>
-      <div class="mt-5 flex lg:mt-0 lg:ml-4">
-        <User />
-      </div>
+  <header
+    class="mx-auto flex h-16 w-screen items-center justify-between bg-gray-50 px-4 shadow-sm sm:px-6 lg:px-8"
+  >
+    <div class="flex items-center gap-4">
+      <Warehouse class="h-8 w-8 text-teal-700 lg:h-11 lg:w-11" />
+      <h2 class="text-3xl font-bold text-gray-900">Warehouse</h2>
     </div>
-  </SidebarProvider>
+    <div class="flex gap-2 font-mono text-2xl">
+      <p>Pial Al Mamun</p>
+      <ProfileSideBar />
+    </div>
+  </header>
 </template>

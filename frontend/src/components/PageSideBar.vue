@@ -10,8 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import HomepageContent from "./HomepageContent.vue";
 
-// Menu items.
 const items = [
   {
     title: "Home",
@@ -44,7 +44,6 @@ const items = [
 <template>
   <Sidebar>
     <SidebarContent>
-      <p>Testing sidebar render</p>
       <SidebarGroup>
         <SidebarGroupLabel>Application</SidebarGroupLabel>
         <SidebarGroupContent>
