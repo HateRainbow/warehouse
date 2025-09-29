@@ -4,7 +4,7 @@ import WareHouse from "./Warehouse.vue";
 import AdminPanel from "./AdminPanel.vue";
 import api from "@/api";
 import LoginPage from "./LoginPage.vue";
-import TwoFactorAuth from "./TwoFactorAuth.vue";
+import TwoFactorSetup from "./TwoFactorSetup.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +14,7 @@ const router = createRouter({
       component: SignupPage,
     },
     { path: "/login", component: LoginPage },
-    { path: "/verify-2fa", component: TwoFactorAuth },
+
     {
       path: "/",
       beforeEnter: async (to, from, next) => {
@@ -32,6 +32,7 @@ const router = createRouter({
       children: [
         { path: "", component: WareHouse },
         { path: "admin", component: AdminPanel },
+        { path: "setup-2fa", component: TwoFactorSetup },
       ],
     },
   ],

@@ -69,8 +69,7 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 const enable2FA = () => {
-  alert("2FA enabled!");
-  has2FA.value = true;
+  router.push("setup-2fa");
 };
 </script>
 
