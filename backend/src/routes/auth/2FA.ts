@@ -1,24 +1,26 @@
 import express, { Request, Response } from "express";
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
-import { validateData } from "../middleware/validationMiddleware";
+import { validateData } from "../../middleware/validationMiddleware";
 import z from "zod";
-import UserModel from "../model/user";
-import protectedRoute from "../middleware/protectedRoute";
+import UserModel from "../../model/user";
 import jwt from "jsonwebtoken";
-import env from "../env";
+import env from "../../env";
+import protectedRoute from "../../middleware/protectedRoute";
+
 const twoFactorRouter = express.Router();
-type UserRequestMetadata = { _id: string };
+
+type UserRequestMetadata = { id: string };
+
 twoFactorRouter.get(
   "/setup-2fa",
   protectedRoute,
   async (req: Request, res: Response) => {
     const secret = speakeasy.generateSecret({ length: 20 });
     //@ts-ignore
-    const { _id } = req.auth as UserRequestMetadata;
+    const { id } = req.user as UserRequestMetadata;
 
-    const user = await UserModel.findById(_id);
-
+    const user = await UserModel.findById(id);
     if (!user) {
       return res.status(404).json({ message: "user doesn't exist" });
     }
@@ -36,7 +38,7 @@ twoFactorRouter.get(
         });
       }
 
-      await UserModel.findByIdAndUpdate(_id, {
+      await UserModel.findByIdAndUpdate(id, {
         twoFactorEnabled: true,
         twoFactorSecret: secret.base32,
       });
@@ -49,9 +51,11 @@ twoFactorRouter.get(
 const twoFactorSchema = z.object({
   token: z.string().length(6),
 });
+
 twoFactorRouter.post(
   "/verify-2fa",
   validateData(twoFactorSchema),
+  protectedRoute,
   async (
     req: Request<{}, {}, z.infer<typeof twoFactorSchema>>,
     res: Response

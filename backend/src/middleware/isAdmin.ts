@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import UserModel from "../model/user";
 
-type UserRequest = { _id: string };
+type UserRequest = { _id?: string };
 
 const requireAdmin = async (
   req: Request,
