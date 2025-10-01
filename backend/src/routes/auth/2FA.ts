@@ -16,35 +16,43 @@ twoFactorRouter.get(
   "/setup-2fa",
   protectedRoute,
   async (req: Request, res: Response) => {
-    const secret = speakeasy.generateSecret({ length: 20 });
     //@ts-ignore
     const { id } = req.user as UserRequestMetadata;
 
     const user = await UserModel.findById(id);
+
     if (!user) {
       return res.status(404).json({ message: "user doesn't exist" });
     }
+    if (user.twoFactorEnabled) {
+      return res
+        .status(400)
+        .json({ message: "2FA is already enabled for this user" });
+    }
+
+    const secret = speakeasy.generateSecret({
+      length: 20,
+      name: `Warehouse App`,
+      issuer: "Warehouse App",
+    });
 
     if (!secret.otpauth_url) {
       return res.status(500).json({ error: "Failed to generate OTP auth URL" });
     }
 
-    qrcode.toDataURL(secret.otpauth_url, async (err, data_url) => {
-      if (err) {
-        return res.status(500).json({
-          status: 500,
-          error: "Failed to generate QR code",
-          details: err.message,
-        });
-      }
-
-      await UserModel.findByIdAndUpdate(id, {
-        twoFactorEnabled: true,
-        twoFactorSecret: secret.base32,
-      });
-
-      return res.json({ qr: data_url });
+    const qr = await qrcode.toDataURL(secret.otpauth_url, {
+      errorCorrectionLevel: "M",
+      type: "image/png",
+      margin: 2,
+      scale: 6,
     });
+
+    await UserModel.findByIdAndUpdate(id, {
+      twoFactorSecret: secret.base32,
+      twoFactorEnabled: true,
+    });
+
+    return res.json({ qr });
   }
 );
 
@@ -60,13 +68,8 @@ twoFactorRouter.post(
     req: Request<{}, {}, z.infer<typeof twoFactorSchema>>,
     res: Response
   ) => {
-    const token = req.cookies.auth;
-
-    if (!token) {
-      return res.status(401).json({ message: "No auth token provided" });
-    }
-
-    const { id } = jwt.verify(token, env.JWT_SECRET) as { id: string };
+    // @ts-ignore
+    const { id } = req.user as UserRequestMetadata;
 
     const { token: userToken } = req.body;
 
