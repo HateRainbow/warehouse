@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 
 const userSchema = new Schema({
   lastName: { type: String, required: true, trim: true },
-  firsName: { type: String, required: true, trim: true },
+  firstName: { type: String, required: true, trim: true },
   hashedPassword: { type: String, required: true, trim: true },
   _id: {
     // Use a UUID4 as user id

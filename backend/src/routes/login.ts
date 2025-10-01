@@ -51,7 +51,12 @@ loginRoute.post(
     return res
       .status(200)
       .cookie("auth", token, { expires: expiration, sameSite: true })
-      .json({ message: "User logged in successfully" });
+      .json({
+        message: "User logged in successfully",
+        email: user.email,
+        firsName: user.firstName,
+        lastName: user.lastName,
+      });
   }
 );
 
