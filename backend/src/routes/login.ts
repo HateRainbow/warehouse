@@ -5,6 +5,7 @@ import { validateData } from "../middleware/validationMiddleware";
 import z from "zod";
 import env from "../env";
 import bcrypt from "bcrypt";
+import twoFactorRouter from "./auth/2FA";
 
 const loginRoute = express.Router();
 
@@ -54,8 +55,9 @@ loginRoute.post(
       .json({
         message: "User logged in successfully",
         email: user.email,
-        firsName: user.firstName,
+        firstName: user.firstName,
         lastName: user.lastName,
+        twoFactorEnabled: user.twoFactorEnabled,
       });
   }
 );

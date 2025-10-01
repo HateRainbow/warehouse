@@ -3,8 +3,9 @@ import protectedRoute from "../../middleware/protectedRoute";
 import itemRoute from "./items";
 import adminRoute from "./admin";
 import twoFactorRouter from "./2FA";
+import userRouter from "./change-user";
 
-const routes = [itemRoute, adminRoute, twoFactorRouter] as const;
+const routes = [itemRoute, adminRoute, twoFactorRouter, userRouter] as const;
 
 const authorizedRoutes = express.Router();
 
