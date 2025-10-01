@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import UserModel from "../model/user";
 import { validateData } from "../middleware/validationMiddleware";
 import z from "zod";
+
 const signupRoute = express.Router();
 
 type UserRequest = Omit<User, "_id" | "hashedPassword" | "role"> & {

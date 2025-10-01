@@ -4,7 +4,6 @@ import env from "../env";
 
 const protectedRoute = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.auth;
-  console.log(`Middleware token: ${token}`);
 
   if (!token) {
     return res.status(401).json({ message: "Not authenticated" });

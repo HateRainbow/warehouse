@@ -5,9 +5,8 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import signupRoute from "./routes/signup";
 import loginRoute from "./routes/login";
-// import cors from "cors"
+import cors from "cors";
 import env from "./env";
-import twoFactorRouter from "./routes/2FA";
 import authorizedRoutes from "./routes/auth";
 
 const app: Express = express();
@@ -23,14 +22,14 @@ app.all("/", async (req: Request, res: Response) => {
 
 app.use(express.json());
 app.use(cookieParser());
-// app.use(cors())
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:5173",
+  })
+);
 
-const routes = [
-  signupRoute,
-  loginRoute,
-  twoFactorRouter,
-  authorizedRoutes,
-] as const;
+const routes = [signupRoute, loginRoute, authorizedRoutes] as const;
 
 // mount the routes
 routes.forEach((route) => app.use("/api", route));
