@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import api from "@/api";
 import ScanQrComponent from "@/components/ScanQrComponent.vue";
-import TwoFactorAuth from "@/components/TwoFactorAuth.vue";
-import Button from "@/components/ui/button/Button.vue";
+import TwoFactorAuth from "@/components/TwoFactorComponent.vue";
 import Card from "@/components/ui/card/Card.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
-import {
-  Stepper,
-  StepperDescription,
-  StepperIndicator,
-  StepperItem,
-  StepperSeparator,
-  StepperTitle,
-  StepperTrigger,
-} from "@/components/ui/stepper";
+import Stepper from "@/components/ui/stepper/Stepper.vue";
+import StepperDescription from "@/components/ui/stepper/StepperDescription.vue";
+import StepperIndicator from "@/components/ui/stepper/StepperIndicator.vue";
+import StepperItem from "@/components/ui/stepper/StepperItem.vue";
+import StepperSeparator from "@/components/ui/stepper/StepperSeparator.vue";
+import StepperTitle from "@/components/ui/stepper/StepperTitle.vue";
+import StepperTrigger from "@/components/ui/stepper/StepperTrigger.vue";
 
 import { QrCode, Shield, ShieldCheck } from "lucide-vue-next";
 import { ref } from "vue";
@@ -40,7 +36,6 @@ const steps = [
     class="bg-background flex min-h-screen flex-col items-center justify-center p-4"
   >
     <div class="w-full max-w-2xl space-y-6">
-      <!-- Header -->
       <div class="space-y-2 text-center">
         <div class="flex justify-center">
           <div
@@ -57,9 +52,11 @@ const steps = [
         </p>
       </div>
 
-      <!-- Stepper -->
-      <Stepper v-slot="{ prevStep, isPrevDisabled }" v-model="stepIndex">
-        <!-- Horizontal Stepper Header -->
+      <Stepper
+        v-slot="{ nextStep, isPrevDisabled }"
+        v-model="stepIndex"
+        class="block"
+      >
         <div class="flex w-full items-center justify-between">
           <StepperItem
             v-for="item in steps"
@@ -76,29 +73,24 @@ const steps = [
                 {{ item.description }}
               </StepperDescription>
             </StepperTrigger>
-            <!-- Only show separator between steps -->
             <StepperSeparator
               v-if="item.step !== steps[steps.length - 1].step"
               class="bg-muted mx-2 h-0.5 flex-1"
             />
           </StepperItem>
         </div>
-      </Stepper>
 
-      <!-- Step Content (Below Stepper) -->
-      <Card class="mt-6 border-2">
-        <CardContent>
-          <template v-if="stepIndex === 1">
+        <Card class="mt-6 w-full items-center border-2">
+          <CardContent>
             <ScanQrComponent
-              :prevStep="prevStep"
+              v-if="stepIndex === 1"
+              :nextStep="nextStep"
               :isPrevDisabled="isPrevDisabled"
             />
-          </template>
-          <template v-else-if="stepIndex === 2">
-            <TwoFactorAuth />
-          </template>
-        </CardContent>
-      </Card>
+            <TwoFactorAuth :nextStep="nextStep" v-if="stepIndex === 2" />
+          </CardContent>
+        </Card>
+      </Stepper>
     </div>
   </div>
 </template>

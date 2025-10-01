@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { Smartphone, QrCode } from "lucide-vue-next";
+import { Smartphone, QrCode, ArrowRight } from "lucide-vue-next";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import api from "@/api";
 import QrcodeVue from "qrcode.vue";
 import { ref, onMounted } from "vue";
+import Button from "./ui/button/Button.vue";
 
-const { prevStep, isPrevDisabled } = defineProps<{
-  prevStep: () => void;
+const { nextStep, isPrevDisabled } = defineProps<{
+  nextStep: () => void;
   isPrevDisabled: boolean;
 }>();
 
@@ -34,13 +35,7 @@ onMounted(async () => {
       <div
         class="border-muted-foreground/20 rounded-lg border-2 border-dashed bg-white p-4"
       >
-        <!-- Render QR code if available, else placeholder -->
-        <qrcode-vue
-          v-if="qrCodeUrl"
-          :value="qrCodeUrl"
-          :size="192"
-          :level="'M'"
-        />
+        <img v-if="qrCodeUrl" :src="qrCodeUrl" :level="'M'" />
         <div
           v-else
           class="text-muted-foreground flex h-48 w-48 items-center justify-center"
@@ -70,9 +65,9 @@ onMounted(async () => {
     </div>
     <div class="flex flex-col gap-3 sm:flex-row">
       <Button
-        @click="prevStep()"
-        class="flex-1 gap-2"
-        :disabled="isPrevDisabled"
+        @click="nextStep()"
+        class="flex-1 cursor-pointer gap-2"
+        :disabled="!isPrevDisabled"
       >
         I've scanned the code
         <ArrowRight class="h-4 w-4" />

@@ -5,13 +5,15 @@ import ProfileSideBar from "./ProfileSideBar.vue";
 
 <template>
   <header
-    class="mx-auto flex h-16 w-screen items-center justify-between bg-gray-50 px-4 shadow-sm sm:px-6 lg:px-8"
+    class="mx-auto flex h-16 w-screen items-center justify-between bg-gray-50 px-4 font-sans shadow-sm sm:px-6 lg:px-8"
   >
     <div class="flex items-center gap-4">
       <Warehouse class="h-8 w-8 text-teal-700 lg:h-11 lg:w-11" />
       <h2 class="text-3xl font-bold text-gray-900">Warehouse</h2>
     </div>
-    <div class="flex gap-2 font-mono text-2xl">
+    <div
+      class="text-1xl flex items-center justify-center gap-3 text-center font-extrabold text-gray-900 lg:gap-6 lg:text-4xl"
+    >
       <p>Pial Al Mamun</p>
       <ProfileSideBar />
     </div>

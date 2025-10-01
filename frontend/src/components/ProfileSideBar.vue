@@ -16,7 +16,14 @@ import {
 import Input from "./ui/input/Input.vue";
 import Button from "./ui/button/Button.vue";
 
-import { EyeIcon, EyeOffIcon, Mail, Lock, User } from "lucide-vue-next";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  Mail,
+  Lock,
+  User,
+  EllipsisIcon,
+} from "lucide-vue-next";
 
 import Sheet from "./ui/sheet/Sheet.vue";
 import SheetTitle from "./ui/sheet/SheetTitle.vue";
@@ -76,9 +83,9 @@ const enable2FA = () => {
 <template>
   <Sheet>
     <SheetTrigger as-child>
-      <Avatar class="h-8 w-8 cursor-pointer bg-gray-300 lg:h-10 lg:w-10">
-        <UserIcon class="h-6 w-6 text-gray-700 lg:h-8 lg:w-8" />
-      </Avatar>
+      <EllipsisIcon
+        class="h-6 w-[100%] cursor-pointer text-gray-700 lg:h-8 lg:w-8"
+      />
     </SheetTrigger>
 
     <SheetContent class="px-2 pt-8">
