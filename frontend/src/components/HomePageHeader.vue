@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { Warehouse } from "lucide-vue-next";
 import ProfileSideBar from "./ProfileSideBar.vue";
+import { useUserStore } from "@/stores/user-store";
+import { storeToRefs } from "pinia";
+
+const userStore = useUserStore();
+const { fullName } = storeToRefs(userStore);
 </script>
 
 <template>
@@ -14,7 +19,7 @@ import ProfileSideBar from "./ProfileSideBar.vue";
     <div
       class="text-1xl flex items-center justify-center gap-3 text-center font-extrabold text-gray-900 lg:gap-6 lg:text-4xl"
     >
-      <p>Pial Al Mamun</p>
+      <p>{{ fullName }}</p>
       <ProfileSideBar />
     </div>
   </header>

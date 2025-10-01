@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -35,6 +35,8 @@ import SheetClose from "./ui/sheet/SheetClose.vue";
 
 import Avatar from "./ui/avatar/Avatar.vue";
 import { User as UserIcon } from "lucide-vue-next";
+import { useUserStore } from "@/stores/user-store";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 
@@ -44,6 +46,8 @@ const error = ref("");
 
 const has2FA = ref(false);
 
+const userStore = useUserStore();
+const { email, twoFactorEnabled, firsName, lastName } = storeToRefs(userStore);
 const formSchema = toTypedSchema(
   z
     .object({
@@ -61,6 +65,25 @@ const formSchema = toTypedSchema(
 
 const { handleSubmit, resetForm, isSubmitting } = useForm({
   validationSchema: formSchema,
+  initialValues: {
+    firstName: firsName.value,
+    lastName: lastName.value,
+    email: email.value,
+  },
+});
+
+const sheetOpen = ref(false);
+
+watch(sheetOpen, (open) => {
+  if (open) {
+    resetForm({
+      values: {
+        firstName: firsName.value,
+        lastName: lastName.value,
+        email: email.value,
+      },
+    });
+  }
 });
 
 const onSubmit = handleSubmit(async (values) => {
@@ -81,7 +104,7 @@ const enable2FA = () => {
 </script>
 
 <template>
-  <Sheet>
+  <Sheet v-model:open="sheetOpen">
     <SheetTrigger as-child>
       <EllipsisIcon
         class="h-6 w-[100%] cursor-pointer text-gray-700 lg:h-8 lg:w-8"
@@ -245,17 +268,14 @@ const enable2FA = () => {
         <p v-if="error" class="mt-2 text-sm text-red-500">{{ error }}</p>
       </form>
 
-      <!-- 2FA Enable Button -->
-      <div class="mt-6">
+      <div class="mt-6" v-if="!twoFactorEnabled">
         <Button
-          v-if="!has2FA"
           variant="outline"
           class="w-full cursor-pointer"
           @click="enable2FA"
         >
           Enable 2FA
         </Button>
-        <p v-else class="text-sm font-medium text-green-600">2FA is enabled</p>
       </div>
 
       <SheetFooter>

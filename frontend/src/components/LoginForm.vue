@@ -17,6 +17,10 @@ import Card from "./ui/card/Card.vue";
 import CardContent from "./ui/card/CardContent.vue";
 import api from "@/api";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useUserStore } from "@/stores/user-store";
+
+const userStore = useUserStore();
 
 const router = useRouter();
 const showPassword = ref(false);
@@ -35,20 +39,31 @@ const form = useForm({
 const onSubmit = form.handleSubmit(async ({ password, email }) => {
   console.log("SUbmiting");
   const { status, data } = await api.post<{
-    verified: string;
     message: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    twoFactorEnabled: boolean;
   }>("/api/login", {
     email,
     password,
   });
 
   console.log(`status is ${status}`);
+
   if (status !== 200) {
     errorMessage.value = data.message;
     return;
   }
 
-  if (data.verified) {
+  userStore.setUser({
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    twoFactorEnabled: data.twoFactorEnabled,
+  });
+
+  if (data.twoFactorEnabled) {
     router.push("/2fa-signup");
   }
 
