@@ -22,7 +22,6 @@ signupRoute.post(
     })
   ),
   async (req: Request<{}, {}, UserRequest>, res: Response) => {
-    // console.log("BODY", req.body)
     const { password, firstName, lastName, email } = req.body;
 
     const isUserRegistered = await UserModel.findOne({ email });

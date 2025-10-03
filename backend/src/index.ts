@@ -8,6 +8,7 @@ import loginRoute from "./routes/login";
 import cors from "cors";
 import env from "./env";
 import authorizedRoutes from "./routes/auth";
+import checkAdmin from "./routes/auth/checkAdmin";
 
 const app: Express = express();
 const port = process.env.PORT || 3000;

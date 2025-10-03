@@ -5,7 +5,6 @@ import { validateData } from "../middleware/validationMiddleware";
 import z from "zod";
 import env from "../env";
 import bcrypt from "bcrypt";
-import twoFactorRouter from "./auth/2FA";
 
 const loginRoute = express.Router();
 

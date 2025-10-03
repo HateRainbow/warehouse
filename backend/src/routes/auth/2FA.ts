@@ -7,23 +7,22 @@ import UserModel from "../../model/user";
 import jwt from "jsonwebtoken";
 import env from "../../env";
 import protectedRoute from "../../middleware/protectedRoute";
+import { getUserId } from "../../util/get-user-id";
 
 const twoFactorRouter = express.Router();
-
-type UserRequestMetadata = { id: string };
 
 twoFactorRouter.get(
   "/setup-2fa",
   protectedRoute,
   async (req: Request, res: Response) => {
-    //@ts-ignore
-    const { id } = req.user as UserRequestMetadata;
+    const { id } = getUserId(req);
 
     const user = await UserModel.findById(id);
 
     if (!user) {
       return res.status(404).json({ message: "user doesn't exist" });
     }
+
     if (user.twoFactorEnabled) {
       return res
         .status(400)
@@ -68,10 +67,15 @@ twoFactorRouter.post(
     req: Request<{}, {}, z.infer<typeof twoFactorSchema>>,
     res: Response
   ) => {
-    // @ts-ignore
-    const { id } = req.user as UserRequestMetadata;
+    const id = getUserId(req);
 
-    const { token: userToken } = req.body;
+    if (!id) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No user ID found." });
+    }
+
+    const { token } = req.body;
 
     const user = await UserModel.findById(id);
 
@@ -84,7 +88,7 @@ twoFactorRouter.post(
     const verified = speakeasy.totp.verify({
       secret: user.twoFactorSecret,
       encoding: "base32",
-      token: userToken,
+      token,
     });
 
     return res.json({ verified });
