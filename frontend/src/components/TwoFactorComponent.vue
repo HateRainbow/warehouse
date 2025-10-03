@@ -36,13 +36,11 @@ const handleComplete = async (digit: string[]) => {
     isLoading.value = false;
     return;
   }
-  console.log("secret:", secret);
   try {
     const { data } = await api.post<{ message: string; verified: boolean }>(
       "/api/auth/verify-2fa",
       { token: secret },
     );
-    console.table(data);
 
     if (data.verified) {
       router.push("/");

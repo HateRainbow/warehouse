@@ -17,12 +17,12 @@ import Card from "./ui/card/Card.vue";
 import CardContent from "./ui/card/CardContent.vue";
 import api from "@/api";
 import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user-store";
 
 const userStore = useUserStore();
 
 const router = useRouter();
+
 const showPassword = ref(false);
 const errorMessage = ref("");
 const zodSchema = z.object({
@@ -37,7 +37,6 @@ const form = useForm({
 });
 
 const onSubmit = form.handleSubmit(async ({ password, email }) => {
-  console.log("SUbmiting");
   const { status, data } = await api.post<{
     message: string;
     firstName: string;
@@ -49,13 +48,10 @@ const onSubmit = form.handleSubmit(async ({ password, email }) => {
     password,
   });
 
-  console.log(`status is ${status}`);
-
   if (status !== 200) {
     errorMessage.value = data.message;
     return;
   }
-
   userStore.setUser({
     firstName: data.firstName,
     lastName: data.lastName,
@@ -64,7 +60,8 @@ const onSubmit = form.handleSubmit(async ({ password, email }) => {
   });
 
   if (data.twoFactorEnabled) {
-    router.push("/2fa-signup");
+    router.push("/verify-2fa");
+    return;
   }
 
   router.push("/");

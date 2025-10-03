@@ -2,10 +2,11 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
+    firstName: "",
     lastName: "",
-    firsName: "",
     email: "",
     twoFactorEnabled: false,
+    isAdmin: false,
   }),
   actions: {
     setUser(user: {
@@ -13,14 +14,19 @@ export const useUserStore = defineStore("user", {
       lastName: string;
       email: string;
       twoFactorEnabled?: boolean;
+      isAdmin?: boolean;
     }) {
-      this.firsName = user.firstName;
+      this.firstName = user.firstName;
       this.lastName = user.lastName;
       this.email = user.email;
-      this.twoFactorEnabled = this.twoFactorEnabled ?? false;
+      this.twoFactorEnabled = user.twoFactorEnabled ?? false;
+      this.isAdmin = user.isAdmin ?? false;
+    },
+    setAdmin(isAdmin: boolean) {
+      this.isAdmin = isAdmin;
     },
   },
   getters: {
-    fullName: (state) => `${state.firsName} ${state.lastName}`,
+    fullName: (state) => `${state.firstName} ${state.lastName}`,
   },
 });

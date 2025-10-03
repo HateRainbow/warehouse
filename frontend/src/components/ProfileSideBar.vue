@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -33,10 +33,9 @@ import SheetDescription from "./ui/sheet/SheetDescription.vue";
 import SheetFooter from "./ui/sheet/SheetFooter.vue";
 import SheetClose from "./ui/sheet/SheetClose.vue";
 
-import Avatar from "./ui/avatar/Avatar.vue";
-import { User as UserIcon } from "lucide-vue-next";
 import { useUserStore } from "@/stores/user-store";
 import { storeToRefs } from "pinia";
+import api from "@/api";
 
 const router = useRouter();
 
@@ -47,7 +46,7 @@ const error = ref("");
 const has2FA = ref(false);
 
 const userStore = useUserStore();
-const { email, twoFactorEnabled, firsName, lastName } = storeToRefs(userStore);
+const { email, twoFactorEnabled, firstName, lastName } = storeToRefs(userStore);
 const formSchema = toTypedSchema(
   z
     .object({
@@ -66,7 +65,7 @@ const formSchema = toTypedSchema(
 const { handleSubmit, resetForm, isSubmitting } = useForm({
   validationSchema: formSchema,
   initialValues: {
-    firstName: firsName.value,
+    firstName: firstName.value,
     lastName: lastName.value,
     email: email.value,
   },
@@ -78,7 +77,7 @@ watch(sheetOpen, (open) => {
   if (open) {
     resetForm({
       values: {
-        firstName: firsName.value,
+        firstName: firstName.value,
         lastName: lastName.value,
         email: email.value,
       },
@@ -86,17 +85,38 @@ watch(sheetOpen, (open) => {
   }
 });
 
-const onSubmit = handleSubmit(async (values) => {
-  try {
-    console.log("Updating profile with", values);
+const onSubmit = handleSubmit(
+  async ({ firstName, email, lastName, password }) => {
+    try {
+      const { status, data } = await api.put<{
+        message: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+      }>("/api/auth/change-user", {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
 
-    error.value = "";
-    alert("Profile updated successfully!");
-  } catch (err: any) {
-    error.value = err?.response?.data?.message || "Update failed";
-    resetForm({ values: {} });
-  }
-});
+      if (status !== 200) {
+        error.value = data.message || "Update failed";
+        resetForm({ values: {} });
+        return;
+      }
+      userStore.setUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        twoFactorEnabled: twoFactorEnabled.value,
+      });
+    } catch (err: any) {
+      error.value = err?.response?.data?.message || "Update failed";
+      resetForm({ values: {} });
+    }
+  },
+);
 
 const enable2FA = () => {
   router.push("setup-2fa");
@@ -268,7 +288,7 @@ const enable2FA = () => {
         <p v-if="error" class="mt-2 text-sm text-red-500">{{ error }}</p>
       </form>
 
-      <div class="mt-6" v-if="!twoFactorEnabled">
+      <div class="mt-6" v-if="twoFactorEnabled">
         <Button
           variant="outline"
           class="w-full cursor-pointer"
