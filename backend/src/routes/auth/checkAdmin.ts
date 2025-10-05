@@ -7,15 +7,18 @@ const checkAdmin = Router();
 checkAdmin.get("/check-admin", async (req: Request, res: Response) => {
   try {
     const id = getUserId(req);
+
     if (!id) {
       return res
         .status(401)
         .json({ message: "Unauthorized: No user ID found." });
     }
     const user = await UserModel.findById(id);
+
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
+
     return res.status(200).json({ isAdmin: user.role === "ADMIN" });
   } catch (error) {
     console.error("Error in checkAdmin function:", error);

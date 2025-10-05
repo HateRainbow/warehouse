@@ -41,8 +41,8 @@ const formSchema = toTypedSchema(
     name: z.string().min(1).optional(),
     description: z.string().optional(),
     location: z.string().min(1).optional(),
-    quantity: z.number().min(0).optional(),
-    price: z.number().min(0).optional(),
+    price: z.preprocess((val) => (val === "" || val == null ? undefined : Number(val)), z.number().nonnegative().optional()),
+    quantity: z.preprocess((val) => (val === "" || val == null ? undefined : Number(val)), z.number().nonnegative().optional()),
   }),
 );
 
@@ -53,7 +53,7 @@ const form = useForm({
 
 const onSubmit = form.handleSubmit(async (values) => {
   try {
-    await api.put<{ message: string }>(
+    const { data } = await api.put<{ message: string }>(
       `/api/auth/admin/modify-item/${props.item._id}`,
       values,
     );
@@ -78,11 +78,7 @@ const onSubmit = form.handleSubmit(async (values) => {
       </DialogHeader>
 
       <form @submit.prevent="onSubmit" class="grid gap-4 py-4">
-        <FormField
-          name="name"
-          :control="form.controlledValues"
-          v-slot="{ field }"
-        >
+        <FormField name="name" :control="form.controlledValues" v-slot="{ field }">
           <FormItem>
             <FormLabel>Name</FormLabel>
             <FormControl><Input v-bind="field" /></FormControl>
@@ -90,11 +86,7 @@ const onSubmit = form.handleSubmit(async (values) => {
           </FormItem>
         </FormField>
 
-        <FormField
-          name="description"
-          :control="form.controlledValues"
-          v-slot="{ field }"
-        >
+        <FormField name="description" :control="form.controlledValues" v-slot="{ field }">
           <FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl><Input v-bind="field" /></FormControl>
@@ -102,11 +94,7 @@ const onSubmit = form.handleSubmit(async (values) => {
           </FormItem>
         </FormField>
 
-        <FormField
-          name="location"
-          :control="form.controlledValues"
-          v-slot="{ field }"
-        >
+        <FormField name="location" :control="form.controlledValues" v-slot="{ field }">
           <FormItem>
             <FormLabel>Location</FormLabel>
             <FormControl><Input v-bind="field" /></FormControl>
@@ -114,11 +102,7 @@ const onSubmit = form.handleSubmit(async (values) => {
           </FormItem>
         </FormField>
 
-        <FormField
-          name="quantity"
-          :control="form.controlledValues"
-          v-slot="{ field }"
-        >
+        <FormField name="quantity" :control="form.controlledValues" v-slot="{ field }">
           <FormItem>
             <FormLabel>Quantity</FormLabel>
             <FormControl><Input type="number" v-bind="field" /></FormControl>
@@ -126,11 +110,7 @@ const onSubmit = form.handleSubmit(async (values) => {
           </FormItem>
         </FormField>
 
-        <FormField
-          name="price"
-          :control="form.controlledValues"
-          v-slot="{ field }"
-        >
+        <FormField name="price" :control="form.controlledValues" v-slot="{ field }">
           <FormItem>
             <FormLabel>Price</FormLabel>
             <FormControl><Input type="number" v-bind="field" /></FormControl>
@@ -140,9 +120,7 @@ const onSubmit = form.handleSubmit(async (values) => {
 
         <DialogFooter>
           <DialogClose as-child>
-            <Button type="submit" class="w-full cursor-pointer"
-              >Save Changes</Button
-            >
+            <Button type="submit" class="w-full cursor-pointer">Save Changes</Button>
           </DialogClose>
         </DialogFooter>
       </form>

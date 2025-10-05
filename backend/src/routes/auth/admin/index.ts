@@ -2,6 +2,7 @@ import express from "express";
 import requireAdmin from "../../../middleware/requireAdmin";
 import addItemRoute from "./add-item";
 import modifyItemRoute from "./modify-item";
+import deleteItemRouter from "./delete-item";
 
 const adminRoute = express.Router();
 
@@ -12,7 +13,7 @@ adminRoute.get("/admin", requireAdmin, (_req, res) => {
   });
 });
 
-const routes = [addItemRoute, modifyItemRoute] as const;
+const routes = [addItemRoute, modifyItemRoute, deleteItemRouter] as const;
 
 routes.forEach((route) => adminRoute.use("/admin", route));
 

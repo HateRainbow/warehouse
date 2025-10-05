@@ -5,7 +5,6 @@ import z from "zod";
 
 const modifyItem = Router();
 
-// Validation schema
 const modifyItemSchema = z.object({
   name: z.string().nonempty().optional(),
   description: z.string().nonempty().optional(),
@@ -43,8 +42,8 @@ modifyItem.put(
     }
 
     try {
-      const item = await ItemModel.findById(id);
-      console.table(item);
+      const item = await ItemModel.findOne({ _id: id });
+
       const updatedItem = await ItemModel.findByIdAndUpdate(id, updateFields, {
         new: true,
         runValidators: true,
