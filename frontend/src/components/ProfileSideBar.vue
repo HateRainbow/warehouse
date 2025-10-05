@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -33,8 +33,9 @@ import SheetDescription from "./ui/sheet/SheetDescription.vue";
 import SheetFooter from "./ui/sheet/SheetFooter.vue";
 import SheetClose from "./ui/sheet/SheetClose.vue";
 
-import Avatar from "./ui/avatar/Avatar.vue";
-import { User as UserIcon } from "lucide-vue-next";
+import { useUserStore } from "@/stores/user-store";
+import { storeToRefs } from "pinia";
+import api from "@/api";
 
 const router = useRouter();
 
@@ -44,6 +45,8 @@ const error = ref("");
 
 const has2FA = ref(false);
 
+const userStore = useUserStore();
+const { email, twoFactorEnabled, firstName, lastName } = storeToRefs(userStore);
 const formSchema = toTypedSchema(
   z
     .object({
@@ -61,19 +64,59 @@ const formSchema = toTypedSchema(
 
 const { handleSubmit, resetForm, isSubmitting } = useForm({
   validationSchema: formSchema,
+  initialValues: {
+    firstName: firstName.value,
+    lastName: lastName.value,
+    email: email.value,
+  },
 });
 
-const onSubmit = handleSubmit(async (values) => {
-  try {
-    console.log("Updating profile with", values);
+const sheetOpen = ref(false);
 
-    error.value = "";
-    alert("Profile updated successfully!");
-  } catch (err: any) {
-    error.value = err?.response?.data?.message || "Update failed";
-    resetForm({ values: {} });
+watch(sheetOpen, (open) => {
+  if (open) {
+    resetForm({
+      values: {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+      },
+    });
   }
 });
+
+const onSubmit = handleSubmit(
+  async ({ firstName, email, lastName, password }) => {
+    try {
+      const { status, data } = await api.put<{
+        message: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+      }>("/api/auth/change-user", {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+
+      if (status !== 200) {
+        error.value = data.message || "Update failed";
+        resetForm({ values: {} });
+        return;
+      }
+      userStore.setUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        twoFactorEnabled: twoFactorEnabled.value,
+      });
+    } catch (err: any) {
+      error.value = err?.response?.data?.message || "Update failed";
+      resetForm({ values: {} });
+    }
+  },
+);
 
 const enable2FA = () => {
   router.push("setup-2fa");
@@ -81,7 +124,7 @@ const enable2FA = () => {
 </script>
 
 <template>
-  <Sheet>
+  <Sheet v-model:open="sheetOpen">
     <SheetTrigger as-child>
       <EllipsisIcon
         class="h-6 w-[100%] cursor-pointer text-gray-700 lg:h-8 lg:w-8"
@@ -245,17 +288,14 @@ const enable2FA = () => {
         <p v-if="error" class="mt-2 text-sm text-red-500">{{ error }}</p>
       </form>
 
-      <!-- 2FA Enable Button -->
-      <div class="mt-6">
+      <div class="mt-6" v-if="twoFactorEnabled">
         <Button
-          v-if="!has2FA"
           variant="outline"
           class="w-full cursor-pointer"
           @click="enable2FA"
         >
           Enable 2FA
         </Button>
-        <p v-else class="text-sm font-medium text-green-600">2FA is enabled</p>
       </div>
 
       <SheetFooter>

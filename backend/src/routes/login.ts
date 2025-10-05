@@ -54,8 +54,9 @@ loginRoute.post(
       .json({
         message: "User logged in successfully",
         email: user.email,
-        firsName: user.firstName,
+        firstName: user.firstName,
         lastName: user.lastName,
+        twoFactorEnabled: user.twoFactorEnabled,
       });
   }
 );

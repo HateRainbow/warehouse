@@ -22,8 +22,7 @@ signupRoute.post(
     })
   ),
   async (req: Request<{}, {}, UserRequest>, res: Response) => {
-    // console.log("BODY", req.body)
-    const { password, firsName, lastName, email } = req.body;
+    const { password, firstName, lastName, email } = req.body;
 
     const isUserRegistered = await UserModel.findOne({ email });
 
@@ -35,7 +34,7 @@ signupRoute.post(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await UserModel.create({ hashedPassword, firsName, lastName, email });
+    await UserModel.create({ hashedPassword, firstName, lastName, email });
 
     res.status(200).json({
       message: "User was successfully created",

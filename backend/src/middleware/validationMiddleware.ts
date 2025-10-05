@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { keyof, ZodObject, ZodType } from "zod";
+import { ZodObject } from "zod";
 
 // zod middleware to validate the expected body data in each routes
 export function validateData(schema: ZodObject<any, any>) {

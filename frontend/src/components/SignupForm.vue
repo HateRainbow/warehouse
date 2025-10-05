@@ -48,7 +48,6 @@ const { handleSubmit, resetForm, isSubmitting } = useForm({
 const onSubmit = handleSubmit(
   async ({ firstName, lastName, email, password }) => {
     try {
-      console.log("submititing");
       const { status, data } = await api.post<{ message: string }>(
         "/api/signup",
         {
