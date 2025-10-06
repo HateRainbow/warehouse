@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
+import api from "@/api";
 import {
   FormControl,
   FormField,
@@ -10,14 +7,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import Input from "./ui/input/Input.vue";
-import { Mail, Lock, Eye, EyeOff } from "lucide-vue-next";
+import { useUserStore } from "@/stores/user-store";
+import { toTypedSchema } from "@vee-validate/zod";
+import { Eye, EyeOff, Lock, Mail } from "lucide-vue-next";
+import { useForm } from "vee-validate";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import * as z from "zod";
 import Button from "./ui/button/Button.vue";
 import Card from "./ui/card/Card.vue";
 import CardContent from "./ui/card/CardContent.vue";
-import api from "@/api";
-import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/user-store";
+import Input from "./ui/input/Input.vue";
 
 const userStore = useUserStore();
 

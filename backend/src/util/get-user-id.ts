@@ -1,4 +1,4 @@
-export const getUserId = (req: any) => {
+export const getUserId = (req: any): string => {
   if (!req.user) {
     throw new Error("User not found in request");
   }

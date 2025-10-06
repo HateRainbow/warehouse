@@ -20,9 +20,15 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ["ADMIN", "EMPLOYEE"],
+    enum: ["ADMIN", "LOGISTIC", "EMPLOYEE"],
     default: "EMPLOYEE",
   },
+  warehouses: [
+    {
+      type: String, // warehouse _id
+      ref: "Warehouse",
+    },
+  ],
   twoFactorEnabled: { type: Boolean, default: false },
   twoFactorSecret: { type: String },
 });

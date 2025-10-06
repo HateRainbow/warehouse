@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
+import api from "@/api";
 import {
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import Input from "./ui/input/Input.vue";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import * as z from "zod";
 import Button from "./ui/button/Button.vue";
 import Card from "./ui/card/Card.vue";
 import CardContent from "./ui/card/CardContent.vue";
+import CardDescription from "./ui/card/CardDescription.vue";
 import CardHeader from "./ui/card/CardHeader.vue";
 import CardTitle from "./ui/card/CardTitle.vue";
-import CardDescription from "./ui/card/CardDescription.vue";
-import api from "@/api";
+import Input from "./ui/input/Input.vue";
 
 const formSchema = toTypedSchema(
   z.object({
@@ -32,7 +32,7 @@ const form = useForm({ validationSchema: formSchema });
 
 const onSubmit = form.handleSubmit(async (values) => {
   try {
-    await api.post("/api/auth/admin/add-item", values);
+    await api.post("/api/auth/item", values);
     form.resetForm();
   } catch (err) {
     console.error(err);

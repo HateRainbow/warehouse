@@ -1,27 +1,16 @@
 <script setup lang="ts">
-import { onMounted, defineProps, ref, watch, computed } from "vue";
+import api from "@/api";
+import { Package } from "lucide-vue-next";
+import { computed, defineProps, onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import DeleteItemButton from "./DeleteItemButton.vue";
+import EditItemDialog from "./EditItemDialog.vue";
+import Badge from "./ui/badge/Badge.vue";
 import Card from "./ui/card/Card.vue";
+import CardContent from "./ui/card/CardContent.vue";
+import CardDescription from "./ui/card/CardDescription.vue";
 import CardHeader from "./ui/card/CardHeader.vue";
 import CardTitle from "./ui/card/CardTitle.vue";
-import { Package } from "lucide-vue-next";
-import CardDescription from "./ui/card/CardDescription.vue";
-import CardContent from "./ui/card/CardContent.vue";
-import Badge from "./ui/badge/Badge.vue";
-import Button from "./ui/button/Button.vue";
-import api from "@/api";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useUserStore } from "@/stores/user-store";
-import { useRoute } from "vue-router";
-import EditItemDialog from "./EditItemDialog.vue";
-import DeleteItemButton from "./DeleteItemButton.vue";
 
 const { query } = defineProps<{
   query: string;
@@ -87,10 +76,13 @@ const isAdminRoute = computed(() => route.path.startsWith("/admin"));
       </CardTitle>
       <CardDescription>{{ description }}</CardDescription>
     </CardHeader>
-    <CardContent>
+    <CardContent class="overflow-auto">
       <div class="max-h-[calc(100vh-8rem)] space-y-4">
-        <div v-for="item in items" :key="item._id"
-          class="border-border flex items-center justify-between rounded-lg border p-4">
+        <div
+          v-for="item in items"
+          :key="item._id"
+          class="border-border flex items-center justify-between rounded-lg border p-4"
+        >
           <div class="flex-1">
             <div class="mb-2 flex items-center gap-3">
               <h3 class="font-semibold">{{ item.name }}</h3>
@@ -98,7 +90,10 @@ const isAdminRoute = computed(() => route.path.startsWith("/admin"));
               <Badge :class="getStatusColor(item.quantity)">{{
                 item.quantity > 10
                   ? "In Stock"
-                  : item.quantity <= 5 ? "Low Stock" : "Medium Stock" }}</Badge>
+                  : item.quantity <= 5
+                    ? "Low Stock"
+                    : "Medium Stock"
+              }}</Badge>
             </div>
             <p class="text-muted-foreground mb-2 text-sm">
               {{ item.description || "No description available." }}
@@ -114,14 +109,23 @@ const isAdminRoute = computed(() => route.path.startsWith("/admin"));
               <span>Price: ${{ item.price }}</span>
             </div>
             <div class="flex gap-2" v-if="isAdminRoute">
-              <EditItemDialog :item="item" :onUpdated="() => fetchItems(query)" />
+              <EditItemDialog
+                :item="item"
+                :onUpdated="() => fetchItems(query)"
+              />
 
-              <DeleteItemButton :id="item._id" />
+              <DeleteItemButton
+                :onUpdated="() => fetchItems(query)"
+                :id="item._id"
+              />
             </div>
           </div>
         </div>
 
-        <div v-if="items.length === 0" class="text-muted-foreground py-8 text-center">
+        <div
+          v-if="items.length === 0"
+          class="text-muted-foreground py-8 text-center"
+        >
           <Package class="mx-auto mb-4 h-12 w-12 opacity-50" />
           <p>No items found matching your search.</p>
         </div>

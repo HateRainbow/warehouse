@@ -3,7 +3,7 @@ import ItemModel from "../../../model/item";
 
 const deleteItemRouter = Router();
 
-deleteItemRouter.delete("/delete-item/:id", async (req, res) => {
+deleteItemRouter.delete("/item/:id", async (req, res) => {
   const { id } = req.params;
 
   if (!id) {

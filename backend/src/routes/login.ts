@@ -57,6 +57,8 @@ loginRoute.post(
         firstName: user.firstName,
         lastName: user.lastName,
         twoFactorEnabled: user.twoFactorEnabled,
+        role: user.role,
+        warehouses: user.warehouses || [],
       });
   }
 );

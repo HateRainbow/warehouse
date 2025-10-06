@@ -19,6 +19,8 @@ userDataRoute.get("/user-info", async (req: Request, res: Response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      role: user.role,
+      warehouses: user.warehouses || [],
       isAdmin: user.role === "ADMIN",
     },
   });

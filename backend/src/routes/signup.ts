@@ -7,8 +7,10 @@ import z from "zod";
 
 const signupRoute = express.Router();
 
-type UserRequest = Omit<User, "_id" | "hashedPassword" | "role"> & {
+type UserRequest = Omit<User, "_id" | "hashedPassword"> & {
   password: string;
+  role?: "ADMIN" | "LOGISTIC" | "EMPLOYEE";
+  warehouses?: string[];
 };
 
 signupRoute.post(
@@ -19,10 +21,12 @@ signupRoute.post(
       firstName: z.string().nonempty(),
       lastName: z.string().nonempty(),
       password: z.string().nonempty(),
+      role: z.enum(["ADMIN", "LOGISTIC", "EMPLOYEE"]).optional(),
+      warehouses: z.array(z.string()).optional(),
     })
   ),
   async (req: Request<{}, {}, UserRequest>, res: Response) => {
-    const { password, firstName, lastName, email } = req.body;
+    const { password, firstName, lastName, email, role, warehouses } = req.body;
 
     const isUserRegistered = await UserModel.findOne({ email });
 
@@ -34,7 +38,14 @@ signupRoute.post(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await UserModel.create({ hashedPassword, firstName, lastName, email });
+    await UserModel.create({
+      hashedPassword,
+      firstName,
+      lastName,
+      email,
+      role: role || "EMPLOYEE",
+      warehouses: warehouses || [],
+    });
 
     res.status(200).json({
       message: "User was successfully created",

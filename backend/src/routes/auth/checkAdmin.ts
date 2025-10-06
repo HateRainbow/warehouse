@@ -19,7 +19,11 @@ checkAdmin.get("/check-admin", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    return res.status(200).json({ isAdmin: user.role === "ADMIN" });
+    return res.status(200).json({
+      isAdmin: user.role === "ADMIN",
+      role: user.role,
+      warehouses: user.warehouses || [],
+    });
   } catch (error) {
     console.error("Error in checkAdmin function:", error);
     res.status(500).json({ message: "Server error in checkAdmin function." });

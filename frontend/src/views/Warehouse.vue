@@ -37,7 +37,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex h-screen w-screen flex-col overflow-hidden">
+  <div class="flex h-screen w-screen flex-col overflow-auto">
     <HomePageHeader />
     <main class="flex-1 overflow-auto">
       <div

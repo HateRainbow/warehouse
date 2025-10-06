@@ -15,9 +15,9 @@ twoFactorRouter.get(
   "/setup-2fa",
   protectedRoute,
   async (req: Request, res: Response) => {
-    const { id } = getUserId(req);
+    const userId = getUserId(req);
 
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "user doesn't exist" });
@@ -46,7 +46,7 @@ twoFactorRouter.get(
       scale: 6,
     });
 
-    await UserModel.findByIdAndUpdate(id, {
+    await UserModel.findByIdAndUpdate(userId, {
       twoFactorSecret: secret.base32,
       twoFactorEnabled: true,
     });

@@ -6,6 +6,7 @@ const ItemSchema = new Schema({
   quantity: { type: Number, required: true, min: 0 },
   price: { type: Number, required: true, min: 0 },
   location: { type: String, required: true, trim: true },
+  warehouseId: { type: String, required: true, ref: "Warehouse" },
 });
 
 const ItemModel = model("Item", ItemSchema);

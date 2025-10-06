@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Warehouse } from "lucide-vue-next";
-import ProfileSideBar from "./ProfileSideBar.vue";
 import { useUserStore } from "@/stores/user-store";
+import { Warehouse } from "lucide-vue-next";
 import { storeToRefs } from "pinia";
-import Button from "./ui/button/Button.vue";
-import { useRoute, RouterLink } from "vue-router";
 import { computed } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import ProfileSideBar from "./ProfileSideBar.vue";
+import Button from "./ui/button/Button.vue";
 
 const userStore = useUserStore();
 const { fullName, isAdmin } = storeToRefs(userStore);

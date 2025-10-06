@@ -11,29 +11,32 @@ const modifyItemSchema = z.object({
   location: z.string().nonempty().optional(),
   price: z.number().nonnegative().optional(),
   quantity: z.number().nonnegative().optional(),
+  warehouseId: z.string().optional(),
 });
 
 modifyItem.put(
-  "/modify-item/:id",
+  "/item/:id",
   validateData(modifyItemSchema),
   async (
     req: Request<{ id: string }, {}, Partial<ItemInsert>>,
     res: Response
   ) => {
     const { id } = req.params;
-    const { name, description, location, price, quantity } = req.body;
 
     if (!id) {
       return res.status(400).json({ message: "Item ID is required" });
     }
 
     // Build update object with only provided fields
-    const updateFields: Partial<ItemInsert> = {};
-    if (name !== undefined) updateFields.name = name;
-    if (description !== undefined) updateFields.description = description;
-    if (location !== undefined) updateFields.location = location;
-    if (price !== undefined) updateFields.price = price;
-    if (quantity !== undefined) updateFields.quantity = quantity;
+    const updateFields: Partial<ItemInsert> = Object.entries(req.body).reduce(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          (acc as any)[key] = value;
+        }
+        return acc;
+      },
+      {} as Partial<ItemInsert>
+    );
 
     if (Object.keys(updateFields).length === 0) {
       return res
@@ -42,8 +45,6 @@ modifyItem.put(
     }
 
     try {
-      const item = await ItemModel.findOne({ _id: id });
-
       const updatedItem = await ItemModel.findByIdAndUpdate(id, updateFields, {
         new: true,
         runValidators: true,
