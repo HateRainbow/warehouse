@@ -22,12 +22,3 @@ Målet är att skapa ett användarvänligt, säkert och skalbart system byggt me
 ---
 
 ## 🗃️ Databas (MongoDB Atlas)
-
-### Collections:
-- **users**
-  ```json
-  {
-    "name": "Admin",
-    "role": "admin",
-    "password": "hashedPassword"
-  }
