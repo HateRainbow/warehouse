@@ -3,7 +3,7 @@ import protectedRoute from "../../middleware/protectedRoute";
 import itemRoute from "./items";
 import twoFactorRouter from "./2FA";
 import userRouter from "./change-user";
-import adminRoute from "./admin";
+import adminRoute from "./_admin";
 import checkAdmin from "./checkAdmin";
 import userDataRoute from "./get-user-data";
 
