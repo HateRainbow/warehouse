@@ -10,14 +10,14 @@ Målet är att skapa ett användarvänligt, säkert och skalbart system byggt me
 
 ## 🧩 Projektbeskrivning
 
-### 🧠 Scenario (kundkrav)
+### 🧠 kundkrav
 - **Admin** kan logga in och hantera (lägga till, uppdatera, ta bort) varor i lagret.  
 - **Användare** kan söka och se en lista över produkter.  
 - Varje produkt innehåller:  
   - **namn**
-  - **kategori**
   - **antal**
-  - **datum då den lades till**
+  - **id**
+  - **position** 
 
 ---
 
